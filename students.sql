@@ -36,6 +36,7 @@ group by s.id order by average desc;
 select s.first_name,
        ifnull(avg(p.grade),0) as average,
 		case
+           when avg(p.grade) is null then 'FAILING'
            when avg(p.grade)>=75 then 'PASSING'
            else 'FAILING'
 	    end as passing_status
