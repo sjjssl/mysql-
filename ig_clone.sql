@@ -45,6 +45,16 @@ CREATE TABLE follows (
         REFERENCES users (id),
     PRIMARY KEY (follower_id , followee_id)
 );
+CREATE TABLE unfollows (
+    follower_id INT NOT NULL,
+    followee_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (follower_id)
+        REFERENCES users (id),
+    FOREIGN KEY (followee_id)
+        REFERENCES users (id),
+    PRIMARY KEY (follower_id , followee_id)
+);
 CREATE TABLE tags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tag_name VARCHAR(255) UNIQUE,
@@ -136,6 +146,41 @@ HAVING COUNT(*) = (SELECT
         COUNT(*)
     FROM
         photos);
+DELIMITER $$
+#create a trigger prevent_self_follow
+CREATE TRIGGER prevent_self_follow
+BEFORE INSERT ON follows FOR EACH ROW
+BEGIN
+     if NEW.follower_id=NEW.followee_id
+     THEN
+          SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT="One Couldn't follow himself/herself!" ;
+	 END IF;
+END;
+$$
+
+Delimiter ;
+INSERT INTO follows(follower_id,followee_id)
+values (4,4);
+delimiter $$
+#create a trigger capture_unfollow
+CREATE TRIGGER capture_follow
+AFTER DELETE ON follows FOR EACH ROW
+BEGIN
+   INSERT INTO unfollows
+   SET
+      follower_id=OLD.follower_id,
+      followee_id=OLD.followee_id;
+END;
+$$
+delimiter ;
+SELECT * from unfollows;
+DELETE FROM follows where follower_id=2 and followee_id=1;
+
+
+
+
+            
 
 
 
