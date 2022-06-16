@@ -176,6 +176,8 @@ $$
 delimiter ;
 SELECT * from unfollows;
 DELETE FROM follows where follower_id=2 and followee_id=1;
+SHOW TRIGGERS;
+DROP TRIGGER prevent_self_follow;
 
 
 
