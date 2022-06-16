@@ -76,5 +76,34 @@ SELECT DISTINCT city FROM station WHERE city RLIKE '^[^aeiou]' AND city RLIKE '[
 #secondary sort them by ascending ID.
 SELECT name FROM students WHERE marks>75 ORDER BY right(name,3),id;
 
+#Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession 
+#as a parenthetical (i.e.: enclosed in parentheses).
+
+SELECT concat(name,'(',left(occupation,1),')') FROM occupations ORDER BY name;
+
+#Query the number of ocurrences of each occupation in OCCUPATIONS. 
+#Sort the occurrences in ascending order, and output them in the following format:
+#There are a total of [occupation_count] [occupation]s.
+#where [occupation_count] is the number of occurrences of an occupation in OCCUPATIONS and [occupation] is the lowercase occupation name. 
+#If more than one Occupation has the same [occupation_count], they should be ordered alphabetically.
+
+SELECT concat('There are a total of ', count(*),' ',lower(occupation),'s.') 
+FROM occupations GROUP BY occupation ORDER BY count(*),occupation;
+
+#You are given a table, BST, 
+#containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N.
+#Write a query to find the node type of Binary Tree ordered by the value of the node. Output one of the following for each node:
+
+#Root: If node is root node.
+#Leaf: If node is leaf node.
+#Inner: If node is neither root nor leaf node.
+
+SELECT N, CASE
+             WHEN P IS NULL THEN 'Root'
+             WHEN (SELECT count(*) FROM BST WHERE B.N=P)>0 THEN 'Inner'
+             ELSE 'Leaf'
+           END
+FROM BST B ORDER BY B.N;
+
 
 
