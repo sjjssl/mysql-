@@ -1,17 +1,16 @@
 drop database if exists book_shop;
 CREATE DATABASE book_shop;
 USE book_shop;
-CREATE TABLE books 
-	(
-		book_id INT NOT NULL AUTO_INCREMENT,
-		title VARCHAR(100),
-		author_fname VARCHAR(100),
-		author_lname VARCHAR(100),
-		released_year INT,
-		stock_quantity INT,
-		pages INT,
-		PRIMARY KEY(book_id)
-	);
+CREATE TABLE books (
+    book_id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(100),
+    author_fname VARCHAR(100),
+    author_lname VARCHAR(100),
+    released_year INT,
+    stock_quantity INT,
+    pages INT,
+    PRIMARY KEY (book_id)
+);
 
 INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
 VALUES
@@ -31,91 +30,270 @@ VALUES
 ('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
 ('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
 ('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
-select * from books;
-select author_fname,author_lname from books;
-select concat(author_fname,' ',author_lname);
-select char_length('hello world');
-select replace('hello world','e','3');
-select reverse('woof');
-select substring('hello world',1,7);
-select concat(author_lname,' is ',char_length(author_lname),' characters long') as info from books;
-select upper('hello world');
-select lower('Hello World');
-select concat('MY FAVORITE BOOK IS THE ',UPPER(title)) as 'favority info' from books;
-select concat(substring(title,1,10),'...') as 'short title', 
-concat(author_lname,',',author_fname) as author,
-concat(stock_quantity,' in stock') as quantity from books;
+SELECT 
+    *
+FROM
+    books;
+SELECT 
+    author_fname, author_lname
+FROM
+    books;
+SELECT CONCAT(author_fname, ' ', author_lname);
+SELECT CHAR_LENGTH('hello world');
+SELECT REPLACE('hello world', 'e', '3');
+SELECT REVERSE('woof');
+SELECT SUBSTRING('hello world', 1, 7);
+SELECT 
+    CONCAT(author_lname,
+            ' is ',
+            CHAR_LENGTH(author_lname),
+            ' characters long') AS info
+FROM
+    books;
+SELECT UPPER('hello world');
+SELECT LOWER('Hello World');
+SELECT 
+    CONCAT('MY FAVORITE BOOK IS THE ', UPPER(title)) AS 'favority info'
+FROM
+    books;
+SELECT 
+    CONCAT(SUBSTRING(title, 1, 10), '...') AS 'short title',
+    CONCAT(author_lname, ',', author_fname) AS author,
+    CONCAT(stock_quantity, ' in stock') AS quantity
+FROM
+    books;
 INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
 VALUES 
 ('10% Happier','Dan','Harris',2014,29,256),
 ('fake_book','Freida','Harris',2001,287,428),
 ('Lincoln In The Bardo','George','Saunders',2017,1000,367);
-select * from books;
-select distinct author_lname from books;
-select title,author_lname from books order by author_lname;
-select title from books where title like '%stories%';
-select title,pages from books order by pages desc limit 1;
-select concat(title,'-',released_year) as summary from books order by released_year desc limit 3;
-select title, author_lname from books where author_lname like '% %';
-select title,released_year,stock_quantity from books 
-order by stock_quantity,released_year desc limit 3;
-select title,author_lname from books order by author_lname,title;
-select upper(concat('MY FAVORITE AUTHOR IS ',author_fname,' ',author_lname,'!')) as yell 
-from books order by author_lname;
-select count(*) as count from books;
-select count(distinct author_fname) as count from books;
-select author_fname, count( author_fname) from books 
-group by author_fname;
-select count(distinct author_lname) from books;
-select author_lname,count(author_lname) as count 
-from books group by author_lname;
-select count(distinct author_lname,author_fname) from books;
-select count(*) from books where title like '%the%';
-select concat(author_fname,' ',author_lname) as name,count(*) 
-from books group by name;
-select count(*),author_lname from books group by author_lname;
-select count(*),author_lname,author_fname 
-from books 
-group by author_lname,author_fname;
-select released_year,count(*) 
-from books 
-group by released_year 
-order by released_year desc;
-select concat('In ', released_year, ' ',Count(*),' book(s) released') as info 
-from books 
-group by released_year order by released_year;
-select min(released_year) from books;
-select max(released_year) from books;
-select min(pages) from books;
-select title from books where pages=(select max(pages) from books);
-select title from books order by pages desc limit 1;
-select min(released_year), concat(author_fname,' ',author_lname) as author from books group by author;
-select count(*), concat(author_fname,' ',author_lname) as author 
-from books 
-group by author;
-select author_fname,author_lname,min(released_year) 
-from books 
-group by author_fname,author_lname;
-select author_fname,author_lname,max(pages) 
-from books 
-group by author_fname,author_lname;
-select sum(pages) from books;
-select  author_fname,author_lname,sum(pages) from books 
-group by author_fname,author_lname;
-select avg(released_year) from books;
-select avg(pages) from books;
-select released_year,avg(stock_quantity) from books 
-group by released_year;
-select author_fname,author_lname,avg(pages) from books 
-group by author_fname,author_lname;
-select count(*) from books;
-select released_year,count(*) from books group by released_year;
-select sum(stock_quantity) from books;
-select author_fname,author_lname, avg(released_year) from books 
-group by author_fname,author_lname;
-select concat(author_fname,' ',author_lname) as 'full name',pages from books 
-order by pages desc limit 1;
-select released_year as year, count(*) as '# books', avg(pages) as 'avg pages' from books
-group by released_year order by released_year;
+SELECT 
+    *
+FROM
+    books;
+SELECT DISTINCT
+    author_lname
+FROM
+    books;
+SELECT 
+    title, author_lname
+FROM
+    books
+ORDER BY author_lname;
+SELECT 
+    title
+FROM
+    books
+WHERE
+    title LIKE '%stories%';
+SELECT 
+    title, pages
+FROM
+    books
+ORDER BY pages DESC
+LIMIT 1;
+SELECT 
+    CONCAT(title, '-', released_year) AS summary
+FROM
+    books
+ORDER BY released_year DESC
+LIMIT 3;
+SELECT 
+    title, author_lname
+FROM
+    books
+WHERE
+    author_lname LIKE '% %';
+SELECT 
+    title, released_year, stock_quantity
+FROM
+    books
+ORDER BY stock_quantity , released_year DESC
+LIMIT 3;
+SELECT 
+    title, author_lname
+FROM
+    books
+ORDER BY author_lname , title;
+SELECT 
+    UPPER(CONCAT('MY FAVORITE AUTHOR IS ',
+                    author_fname,
+                    ' ',
+                    author_lname,
+                    '!')) AS yell
+FROM
+    books
+ORDER BY author_lname;
+SELECT 
+    COUNT(*) AS count
+FROM
+    books;
+SELECT 
+    COUNT(DISTINCT author_fname) AS count
+FROM
+    books;
+SELECT 
+    author_fname, COUNT(author_fname)
+FROM
+    books
+GROUP BY author_fname;
+SELECT 
+    COUNT(DISTINCT author_lname)
+FROM
+    books;
+SELECT 
+    author_lname, COUNT(author_lname) AS count
+FROM
+    books
+GROUP BY author_lname;
+SELECT 
+    COUNT(DISTINCT author_lname, author_fname)
+FROM
+    books;
+SELECT 
+    COUNT(*)
+FROM
+    books
+WHERE
+    title LIKE '%the%';
+SELECT 
+    CONCAT(author_fname, ' ', author_lname) AS name, COUNT(*)
+FROM
+    books
+GROUP BY name;
+SELECT 
+    COUNT(*), author_lname
+FROM
+    books
+GROUP BY author_lname;
+SELECT 
+    COUNT(*), author_lname, author_fname
+FROM
+    books
+GROUP BY author_lname , author_fname;
+SELECT 
+    released_year, COUNT(*)
+FROM
+    books
+GROUP BY released_year
+ORDER BY released_year DESC;
+SELECT 
+    CONCAT('In ',
+            released_year,
+            ' ',
+            COUNT(*),
+            ' book(s) released') AS info
+FROM
+    books
+GROUP BY released_year
+ORDER BY released_year;
+SELECT 
+    MIN(released_year)
+FROM
+    books;
+SELECT 
+    MAX(released_year)
+FROM
+    books;
+SELECT 
+    MIN(pages)
+FROM
+    books;
+SELECT 
+    title
+FROM
+    books
+WHERE
+    pages = (SELECT 
+            MAX(pages)
+        FROM
+            books);
+SELECT 
+    title
+FROM
+    books
+ORDER BY pages DESC
+LIMIT 1;
+SELECT 
+    MIN(released_year),
+    CONCAT(author_fname, ' ', author_lname) AS author
+FROM
+    books
+GROUP BY author;
+SELECT 
+    COUNT(*), CONCAT(author_fname, ' ', author_lname) AS author
+FROM
+    books
+GROUP BY author;
+SELECT 
+    author_fname, author_lname, MIN(released_year)
+FROM
+    books
+GROUP BY author_fname , author_lname;
+SELECT 
+    author_fname, author_lname, MAX(pages)
+FROM
+    books
+GROUP BY author_fname , author_lname;
+SELECT 
+    SUM(pages)
+FROM
+    books;
+SELECT 
+    author_fname, author_lname, SUM(pages)
+FROM
+    books
+GROUP BY author_fname , author_lname;
+SELECT 
+    AVG(released_year)
+FROM
+    books;
+SELECT 
+    AVG(pages)
+FROM
+    books;
+SELECT 
+    released_year, AVG(stock_quantity)
+FROM
+    books
+GROUP BY released_year;
+SELECT 
+    author_fname, author_lname, AVG(pages)
+FROM
+    books
+GROUP BY author_fname , author_lname;
+SELECT 
+    COUNT(*)
+FROM
+    books;
+SELECT 
+    released_year, COUNT(*)
+FROM
+    books
+GROUP BY released_year;
+SELECT 
+    SUM(stock_quantity)
+FROM
+    books;
+SELECT 
+    author_fname, author_lname, AVG(released_year)
+FROM
+    books
+GROUP BY author_fname , author_lname;
+SELECT 
+    CONCAT(author_fname, ' ', author_lname) AS 'full name',
+    pages
+FROM
+    books
+ORDER BY pages DESC
+LIMIT 1;
+SELECT 
+    released_year AS year,
+    COUNT(*) AS '# books',
+    AVG(pages) AS 'avg pages'
+FROM
+    books
+GROUP BY released_year
+ORDER BY released_year;
 
 

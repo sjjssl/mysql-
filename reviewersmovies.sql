@@ -1,18 +1,24 @@
-CREATE TABLE reviewers(id int AUTO_INCREMENT PRIMARY KEY,
-                       first_name VARCHAR(100),
-                       last_name VARCHAR(100));
-CREATE TABLE series(
-					id int AUTO_INCREMENT PRIMARY KEY,
-                    title VARCHAR(100),
-                    released_year YEAR(4),
-                    genre VARCHAR(100));
-CREATE TABLE reviews(
-					id  int PRIMARY KEY AUTO_INCREMENT,
-                    rating DECIMAL(2,1),
-                    series_id INT,
-                    reviewer_id INT,
-                    FOREIGN KEY(series_id) REFERENCES series(id),
-                    FOREIGN KEY(reviewer_id) REFERENCES reviewers(id));
+CREATE TABLE reviewers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100)
+);
+CREATE TABLE series (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    released_year YEAR(4),
+    genre VARCHAR(100)
+);
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    rating DECIMAL(2 , 1 ),
+    series_id INT,
+    reviewer_id INT,
+    FOREIGN KEY (series_id)
+        REFERENCES series (id),
+    FOREIGN KEY (reviewer_id)
+        REFERENCES reviewers (id)
+);
 INSERT INTO series (title, released_year, genre) VALUES
     ('Archer', 2009, 'Animation'),
     ('Arrested Development', 2003, 'Comedy'),
@@ -49,52 +55,92 @@ INSERT INTO reviews(series_id, reviewer_id, rating) VALUES
     (10,5,9.9),
     (13,3,8.0),(13,4,7.2),
     (14,2,8.5),(14,3,8.9),(14,4,8.9);
-SELECT * FROM series;
-SELECT * FROM reviewers;
-SELECT * FROM reviews;
-SELECT title,rating FROM series s
-JOIN reviews r
-     on s.id=r.series_id;
-select title,avg(rating) as avg_rating from series s
-JOIN reviews r
-     on s.id=r.series_id
-group by s.id 
-order by avg_rating;
-select rr.first_name,rr.last_name,r.rating from reviewers rr
-join reviews r 
-     on rr.id=r.reviewer_id;
-#unreviewed series
-select title as unreviewed_series from series s 
-left join reviews r 
-     on s.id=r.series_id
-where rating is null;
-# genre average ratings
-select genre, round(avg(rating),2) as avg_rating from series s 
-join reviews r 
-     on r.series_id=s.id
-group by genre;
-select rr.first_name,
-       rr.last_name,
-       count(rating) as COUNT,
-       ifnull(min(rating),0) as MIN, 
-       ifnull(max(rating),0) as MAX,
-       ifnull(avg(rating),0) as AVG,
-       case 
-           when count(rating)>0 then 'ACTIVE'
-           else 'INACTIVE'
-		end as STATUS
-from reviewers rr
-left join reviews r 
-on r.reviewer_id=rr.id
-group by rr.id;
-select rr.first_name,
-       rr.last_name,
-       count(rating) as COUNT,
-       ifnull(min(rating),0) as MIN, 
-       ifnull(max(rating),0) as MAX,
-       round(ifnull(avg(rating),0),2) as AVG,
-       if(count(rating)>0,'ACTIVE','INACTIVE') as STATUS
-from reviewers rr
-left join reviews r 
-on r.reviewer_id=rr.id
-group by rr.id;
+SELECT 
+    *
+FROM
+    series;
+SELECT 
+    *
+FROM
+    reviewers;
+SELECT 
+    *
+FROM
+    reviews;
+SELECT 
+    title, rating
+FROM
+    series s
+        JOIN
+    reviews r ON s.id = r.series_id;
+SELECT 
+    title, AVG(rating) AS avg_rating
+FROM
+    series s
+        JOIN
+    reviews r ON s.id = r.series_id
+GROUP BY s.id
+ORDER BY avg_rating;
+SELECT 
+    rr.first_name, rr.last_name, r.rating
+FROM
+    reviewers rr
+        JOIN
+    reviews r ON rr.id = r.reviewer_id;
+SELECT 
+    title AS unreviewed_series
+FROM
+    series s
+        LEFT JOIN
+    reviews r ON s.id = r.series_id
+WHERE
+    rating IS NULL;
+SELECT 
+    genre, ROUND(AVG(rating), 2) AS avg_rating
+FROM
+    series s
+        JOIN
+    reviews r ON r.series_id = s.id
+GROUP BY genre;
+SELECT 
+    rr.first_name,
+    rr.last_name,
+    COUNT(rating) AS COUNT,
+    IFNULL(MIN(rating), 0) AS MIN,
+    IFNULL(MAX(rating), 0) AS MAX,
+    IFNULL(AVG(rating), 0) AS AVG,
+    CASE
+        WHEN COUNT(rating) > 0 THEN 'ACTIVE'
+        ELSE 'INACTIVE'
+    END AS STATUS
+FROM
+    reviewers rr
+        LEFT JOIN
+    reviews r ON r.reviewer_id = rr.id
+GROUP BY rr.id;
+SELECT 
+    rr.first_name,
+    rr.last_name,
+    COUNT(rating) AS COUNT,
+    IFNULL(MIN(rating), 0) AS MIN,
+    IFNULL(MAX(rating), 0) AS MAX,
+    ROUND(IFNULL(AVG(rating), 0), 2) AS AVG,
+    IF(COUNT(rating) > 0,
+        'ACTIVE',
+        'INACTIVE') AS STATUS
+FROM
+    reviewers rr
+        LEFT JOIN
+    reviews r ON r.reviewer_id = rr.id
+GROUP BY rr.id;
+SELECT 
+    title,
+    rating,
+    CONCAT(first_name, ' ', last_name) AS reviewer
+FROM
+    series s
+        JOIN
+    reviews r ON s.id = r.series_id
+        JOIN
+    reviewers rr ON rr.id = r.reviewer_id
+ORDER BY r.series_id;

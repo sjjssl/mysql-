@@ -1,4 +1,7 @@
-create table students(id int PRIMARY key AUTO_INCREMENT,first_name varchar(20));
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(20)
+);
 create table papers(
 title varchar(150),
 grade int, 

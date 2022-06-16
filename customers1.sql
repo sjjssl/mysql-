@@ -1,13 +1,18 @@
 use testing;
-create table customers1(id int PRIMARY key AUTO_INCREMENT,
-first_name varchar(100),
-last_name varchar(100),
-email varchar(100));
-create table orders1 (id int AUTO_INCREMENT PRIMARY key,
-order_date date,
-amount decimal(8,2),
-customer_id int,
-foreign key(customer_id) REFERENCES customers1(id));
+CREATE TABLE customers1 (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(100)
+);
+CREATE TABLE orders1 (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    amount DECIMAL(8 , 2 ),
+    customer_id INT,
+    FOREIGN KEY (customer_id)
+        REFERENCES customers1 (id)
+);
 INSERT INTO customers1 (first_name, last_name, email) 
 VALUES ('Boy', 'George', 'george@gmail.com'),
        ('George', 'Michael', 'gm@gmail.com'),
@@ -20,15 +25,38 @@ VALUES ('2016/02/10', 99.99, 1),
        ('2014/12/12', 800.67, 2),
        ('2015/01/03', 12.50, 2),
        ('1999/04/11', 450.25, 5);
-select * from orders1;
-select * from orders1 where customer_id=(select id from customers1 where last_name='George');
-#implicit inner join
-select * from orders1 o, customers1 c where o.customer_id=c.id;
-#explicit inner join
-select * from customers1 c
-inner join orders1 o
-on c.id=o.customer_id;
-create table test(A int default null, B int DEFAULT null);
+SELECT 
+    *
+FROM
+    orders1;
+SELECT 
+    *
+FROM
+    orders1
+WHERE
+    customer_id = (SELECT 
+            id
+        FROM
+            customers1
+        WHERE
+            last_name = 'George');
+SELECT 
+    *
+FROM
+    orders1 o,
+    customers1 c
+WHERE
+    o.customer_id = c.id;
+SELECT 
+    *
+FROM
+    customers1 c
+        INNER JOIN
+    orders1 o ON c.id = o.customer_id;
+CREATE TABLE test (
+    A INT DEFAULT NULL,
+    B INT DEFAULT NULL
+);
 insert into test (A,B)
 values (3,4),
 (3,null),
@@ -37,38 +65,50 @@ values (3,4),
 (null,2),
 (1,3),
 (null,3);
-select * from test group by A,B;
-select c.first_name,c.last_name,sum(amount) as total from customers1 c
-join orders1 o
-on c.id=o.customer_id
-group by o.customer_id
-order by total desc;
-#left join
-select c.first_name,
-	   c.last_name,
-       ifnull(sum(o.amount),0) as total
-       from customers1 c
-left join orders1 o 
-on c.id=o.customer_id
-group by c.id
-order by total desc;
-#right join
-select * from customers1 c
-right join orders1 o
-on c.id=o.customer_id; 
+SELECT 
+    *
+FROM
+    test
+GROUP BY A , B;
+SELECT 
+    c.first_name, c.last_name, SUM(amount) AS total
+FROM
+    customers1 c
+        JOIN
+    orders1 o ON c.id = o.customer_id
+GROUP BY o.customer_id
+ORDER BY total DESC;
+SELECT 
+    c.first_name, c.last_name, IFNULL(SUM(o.amount), 0) AS total
+FROM
+    customers1 c
+        LEFT JOIN
+    orders1 o ON c.id = o.customer_id
+GROUP BY c.id
+ORDER BY total DESC;
+SELECT 
+    *
+FROM
+    customers1 c
+        RIGHT JOIN
+    orders1 o ON c.id = o.customer_id; 
 # on delete cascade
 drop table customers1,orders1;
-create table customers1(id int PRIMARY key AUTO_INCREMENT,
-first_name varchar(100),
-last_name varchar(100),
-email varchar(100));
-create table orders1 (id int AUTO_INCREMENT PRIMARY key,
-order_date date,
-amount decimal(8,2),
-customer_id int,
-foreign key(customer_id) 
-REFERENCES customers1(id)
-on delete cascade);
+CREATE TABLE customers1 (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email VARCHAR(100)
+);
+CREATE TABLE orders1 (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    amount DECIMAL(8 , 2 ),
+    customer_id INT,
+    FOREIGN KEY (customer_id)
+        REFERENCES customers1 (id)
+        ON DELETE CASCADE
+);
 INSERT INTO customers1 (first_name, last_name, email) 
 VALUES ('Boy', 'George', 'george@gmail.com'),
        ('George', 'Michael', 'gm@gmail.com'),
@@ -81,9 +121,17 @@ VALUES ('2016/02/10', 99.99, 1),
        ('2014/12/12', 800.67, 2),
        ('2015/01/03', 12.50, 2),
        ('1999/04/11', 450.25, 5);
-select * from orders1;
-delete from customers1 where email='george@gmail.com';
-select * from orders1;
+SELECT 
+    *
+FROM
+    orders1;
+DELETE FROM customers1 
+WHERE
+    email = 'george@gmail.com';
+SELECT 
+    *
+FROM
+    orders1;
 
 
 

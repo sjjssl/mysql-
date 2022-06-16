@@ -1,9 +1,14 @@
 drop database if EXISTS customers;
 create database customers;
-create table customers(customer_id int PRIMARY key AUTO_INCREMENT,
-customer_name varchar(50));
-CREATE TABLE orders(order_id int PRIMARY key,
-customer_id int, product_name varchar(15));
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_name VARCHAR(50)
+);
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    product_name VARCHAR(15)
+);
 insert into customers(customer_name)
 VALUES ('Daniel'),
        ('Diana'),
@@ -19,21 +24,61 @@ values ('10',1,'A'),
        ('70',3,'B'),
        ('80',3,'D'),
        ('90',4,'C');
-select customer_id,customer_name from
-customers where customer_id in
-(select distinct customer_id
-from orders 
-where customer_id IN
-(select distinct customer_id from orders where product_name='A')
-and customer_id in
-(select distinct customer_id from orders where product_name='B')
-and customer_id not in
-(select distinct customer_id from orders where product_name='C'));
-SELECT customer_id,customer_name from orders o 
-join customers c using(customer_id)
-where customer_id not in (select distinct customer_id from orders where product_name ='C') and customer_id  in (select distinct customer_id from orders where product_name ='A') and customer_id in (select distinct customer_id from orders where product_name ='B')
-GROUP BY customer_id 
-having count(*)>=2;
+SELECT 
+    customer_id, customer_name
+FROM
+    customers
+WHERE
+    customer_id IN (SELECT DISTINCT
+            customer_id
+        FROM
+            orders
+        WHERE
+            customer_id IN (SELECT DISTINCT
+                    customer_id
+                FROM
+                    orders
+                WHERE
+                    product_name = 'A')
+                AND customer_id IN (SELECT DISTINCT
+                    customer_id
+                FROM
+                    orders
+                WHERE
+                    product_name = 'B')
+                AND customer_id NOT IN (SELECT DISTINCT
+                    customer_id
+                FROM
+                    orders
+                WHERE
+                    product_name = 'C'));
+SELECT 
+    customer_id, customer_name
+FROM
+    orders o
+        JOIN
+    customers c USING (customer_id)
+WHERE
+    customer_id NOT IN (SELECT DISTINCT
+            customer_id
+        FROM
+            orders
+        WHERE
+            product_name = 'C')
+        AND customer_id IN (SELECT DISTINCT
+            customer_id
+        FROM
+            orders
+        WHERE
+            product_name = 'A')
+        AND customer_id IN (SELECT DISTINCT
+            customer_id
+        FROM
+            orders
+        WHERE
+            product_name = 'B')
+GROUP BY customer_id
+HAVING COUNT(*) >= 2;
 with t as 
 (SELECT customer_id, 
 	max('C'=product_name) c, 
@@ -44,15 +89,37 @@ SELECT cu.*
 from Customers cu INNER JOIN t on 
 	cu.customer_id=t.customer_id and 
 	t.c=0 and t.a=1 and t.b=1;
-select * from orders;
-select * from customers;
+SELECT 
+    *
+FROM
+    orders;
+SELECT 
+    *
+FROM
+    customers;
 
-select s.customer_id,s.customer_name from (
-select c.customer_name, c.customer_id,
-(select count(1) from orders o2 where o2.customer_id=c.customer_id and product_name='c') as prod_c_cnt
- from customers c, orders o 
-where c.customer_id = o.customer_id and product_name in ('A','B')
-group by c.customer_name, c.customer_id having max(o.product_name)<>min(o.product_name)) as s where s.prod_c_cnt=0;
+SELECT 
+    s.customer_id, s.customer_name
+FROM
+    (SELECT 
+        c.customer_name,
+            c.customer_id,
+            (SELECT 
+                    COUNT(1)
+                FROM
+                    orders o2
+                WHERE
+                    o2.customer_id = c.customer_id
+                        AND product_name = 'c') AS prod_c_cnt
+    FROM
+        customers c, orders o
+    WHERE
+        c.customer_id = o.customer_id
+            AND product_name IN ('A' , 'B')
+    GROUP BY c.customer_name , c.customer_id
+    HAVING MAX(o.product_name) <> MIN(o.product_name)) AS s
+WHERE
+    s.prod_c_cnt = 0;
 
 
 
