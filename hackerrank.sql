@@ -491,10 +491,66 @@ ORDER BY grade DESC , name;
 #Harry Potter and his friends are at Ollivander's with Ron, finally replacing Charlie's old broken wand. 
 #Hermione decides the best way to choose is by determining the minimum number of gold galleons needed to buy each non-evil wand of high 
 #power and age. Write a query to print the id, age, coins_needed, and power of the wands that Ron's interested in, 
-#sorted in order of descending power. If more than one wand has same power, sort the result in order of descending age.
+#sorted in order of descending power. If more than one wand has same power, sort the result in order of descending age.(oracle)
 SELECT id, age, coins_needed,power 
 FROM
 (SELECT id,age,coins_needed,power,ROW_NUMBER() OVER(PARTITION BY power,age ORDER BY coins_needed) AS rn 
 FROM wands w JOIN wands_property wp USING(code) WHERE is_evil=0)
 WHERE rn=1 
 ORDER BY power DESC,age DESC;
+#The total score of a hacker is the sum of their maximum scores for all of the challenges. Write a query to print the hacker_id, name,
+#and total score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the 
+#result by ascending hacker_id. Exclude all hackers with a total score of 0 from your result.(oracle)
+SELECT hacker_id,
+       NAME,
+       total
+FROM  (SELECT DISTINCT hacker_id,
+                       NAME,
+                       Sum(maxscore)
+                         OVER(
+                           partition BY hacker_id)AS total
+       FROM   (SELECT DISTINCT h.hacker_id,
+                               h.NAME,
+                               s.challenge_id,
+                               Max(s.score)
+                                 OVER(
+                                   partition BY h.hacker_id, s.challenge_id) AS
+                               maxscore
+               FROM   hackers h
+                      JOIN submissions s
+                        ON h.hacker_id = s.hacker_id)
+       ORDER  BY total DESC,
+                 hacker_id)
+WHERE  total != 0; 
+#You are given a table, BST, containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N.(oracle)
+SELECT n,
+       CASE
+         WHEN p IS NULL THEN "root"
+         WHEN n IN (SELECT b1.n
+                    FROM   bst b1,
+                           bst b2
+                    WHERE  b1.n = b2.p) THEN 'Inner'
+         ELSE "leaf"
+       END
+FROM   bst
+ORDER  BY n; 
+#Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. 
+#Order your output in descending order by the total number of challenges in which the hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id.
+SELECT t.hacker_id,
+       t.NAME
+FROM   (SELECT h.hacker_id,
+               h.NAME,
+               Count(*) AS cn
+        FROM   hackers h
+               JOIN submissions s
+                 ON h.hacker_id = s.hacker_id
+               JOIN challenges c
+                 ON s.challenge_id = c.challenge_id
+               JOIN difficulty d
+                 ON c.difficulty_level = d.difficulty_level
+        WHERE  s.score = d.score
+        GROUP  BY h.hacker_id,
+                  h.NAME
+        HAVING cn > 1
+        ORDER  BY Count(*) DESC,
+                  h.hacker_id) AS t; 
