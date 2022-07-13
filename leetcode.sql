@@ -65,18 +65,12 @@ ORDER BY user_id;
 
 #1527. Patients With a Condition
 #method1
-SELECT 
-    *
-FROM
-    PATIENTS
-WHERE
-    conditions REGEXP '\bDIAB1.*\b';
-#method2
 SELECT * FROM PATIENTS
 WHERE conditions REGEXP '(^DIAB1| DIAB1)';
-#method3
+#method2
 SELECT * FROM PATIENTS
 WHERE CONDITIONS rlike '^DIAB1|\\sDIAB1';
+
 #1484. Group Sold Products By The Date
 SELECT 
     sell_date,
@@ -86,3 +80,70 @@ SELECT
 FROM
     activities
 GROUP BY sell_date;
+
+#1965. Employees With Missing Information
+
+(SELECT 
+    employee_id
+FROM
+    employees e
+        LEFT JOIN
+    salaries s USING (employee_id)
+WHERE
+    salary IS NULL) UNION (SELECT 
+    employee_id
+FROM
+    employees e
+        RIGHT JOIN
+    salaries s USING (employee_id)
+WHERE
+    name IS NULL) ORDER BY employee_id;
+    
+    
+#1795. Rearrange Products Table
+(SELECT 
+    product_id, 'store1' store, store1 price
+FROM
+    products
+WHERE
+    store1 IS NOT NULL) UNION ALL (SELECT 
+    product_id, 'store2' store, store2 price
+FROM
+    products
+WHERE
+    store2 IS NOT NULL) UNION ALL (SELECT 
+    product_id, 'store3' store, store3 price
+FROM
+    products
+WHERE
+    store3 IS NOT NULL)
+;
+
+#608. Tree Node
+SELECT 
+    id,
+    CASE
+        WHEN p_id IS NULL THEN 'Root'
+        WHEN
+            t1.id IN (SELECT 
+                    p_id
+                FROM
+                    tree)
+        THEN
+            'Inner'
+        ELSE 'Leaf'
+    END AS type
+FROM
+    tree t1
+ORDER BY id;
+
+#176. Second Highest Salary
+SELECT 
+    MAX(salary) AS 'SecondHighestSalary'
+FROM
+    employee
+WHERE
+    salary < (SELECT 
+            MAX(salary)
+        FROM
+            employee);
