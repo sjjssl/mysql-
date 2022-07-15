@@ -147,3 +147,28 @@ WHERE
             MAX(salary)
         FROM
             employee);
+            
+#197. Rising Temperature
+SELECT 
+    w2.id
+FROM
+    weather w1
+        JOIN
+    weather w2 ON w1.recordDate = SUBDATE(w2.recordDate, 1)
+WHERE
+    w1.temperature < w2.temperature;
+    
+#607. Sales Person
+SELECT 
+    name
+FROM
+    salesPerson
+WHERE
+    sales_id NOT IN (SELECT 
+            sales_id
+        FROM
+            orders o
+                LEFT JOIN
+            company c USING (com_id)
+        WHERE
+            c.name = 'RED');
