@@ -172,3 +172,30 @@ WHERE
             company c USING (com_id)
         WHERE
             c.name = 'RED');
+#1141. User Activity for the Past 30 Days I
+SELECT 
+    activity_date AS day,
+    COUNT(DISTINCT user_id) AS active_users
+FROM
+    activity
+WHERE
+    activity_date > SUBDATE('2019-07-27', 30)
+        AND activity_date <= '2019-07-27'
+GROUP BY activity_date
+HAVING COUNT(DISTINCT user_id) > 0;
+#1693. Daily Leads and Partners
+SELECT 
+    date_id,
+    make_name,
+    COUNT(DISTINCT lead_id) AS unique_leads,
+    COUNT(DISTINCT partner_id) AS unique_partners
+FROM
+    dailysales
+GROUP BY date_id , make_name;
+#1729. Find Followers Count
+SELECT 
+    user_id, COUNT(follower_id) AS followers_count
+FROM
+    followers
+GROUP BY user_id
+ORDER BY user_id;
