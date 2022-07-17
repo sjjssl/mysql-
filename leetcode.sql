@@ -199,3 +199,50 @@ FROM
     followers
 GROUP BY user_id
 ORDER BY user_id;
+#596. Classes More Than 5 Students
+SELECT 
+    class
+FROM
+    courses
+GROUP BY class
+HAVING (COUNT(DISTINCT student)) >= 5;
+#620. Not Boring Movies
+SELECT 
+    id, movie, description, rating
+FROM
+    cinema
+WHERE
+    id % 2 = 1 AND description <> 'boring'
+ORDER BY rating DESC;
+#586. Customer Placing the Largest Number of Orders
+SELECT 
+    customer_number
+FROM
+    orders
+GROUP BY customer_number
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+#511. Game Play Analysis I
+SELECT 
+    player_id, MIN(event_date) AS first_login
+FROM
+    activity
+GROUP BY player_id;
+
+#1890. The Latest Login in 2020
+SELECT 
+    user_id, MAX(time_stamp) AS last_stamp
+FROM
+    logins
+WHERE
+    SUBSTR(time_stamp, 1, 4) = '2020'
+GROUP BY user_id;
+#1741. Find Total Time Spent by Each Employee
+SELECT 
+    event_day AS day,
+    emp_id,
+    SUM(out_time - in_time) AS total_time
+FROM
+    employees
+GROUP BY event_day , emp_id;
