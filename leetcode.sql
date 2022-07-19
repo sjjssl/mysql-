@@ -246,3 +246,96 @@ SELECT
 FROM
     employees
 GROUP BY event_day , emp_id;
+#1393. Capital Gain/Loss
+SELECT 
+    stock_name, SUM(price) AS capital_gain_loss
+FROM
+    (SELECT 
+        stock_name,
+            CASE
+                WHEN operation = 'Buy' THEN - 1 * price
+                WHEN operation = 'Sell' THEN price
+            END AS price
+    FROM
+        stocks) AS t
+GROUP BY stock_name;
+
+SELECT 
+    stock_name,
+    SUM(IF(operation = 'Buy',
+        - 1 * price,
+        price)) AS capital_gain_loss
+FROM
+    stocks
+GROUP BY stock_name;
+
+#1407. Top Travellers
+SELECT 
+    u.name, IFNULL(SUM(r.distance), 0) AS travelled_distance
+FROM
+    users u
+        LEFT JOIN
+    rides r ON u.id = r.user_id
+GROUP BY u.id
+ORDER BY travelled_distance DESC , u.name;
+#182. Duplicate Emails
+SELECT 
+    email
+FROM
+    person
+GROUP BY email
+HAVING COUNT(*) > 1;
+
+#1050. Actors and Directors Who Cooperated At Least Three Times
+SELECT 
+    actor_id, director_id
+FROM
+    actordirector
+GROUP BY actor_id , director_id
+HAVING COUNT(*) >= 3;
+
+#1587. Bank Account Summary II
+SELECT 
+    name, SUM(amount) AS balance
+FROM
+    users u
+        JOIN
+    transactions t USING (account)
+GROUP BY account
+HAVING balance > 10000;
+
+#1084. Sales Analysis III
+SELECT DISTINCT
+    product_id, product_name
+FROM
+    product p
+        JOIN
+    sales s USING (product_id)
+WHERE
+    sale_date BETWEEN '2019-01-01' AND '2019-03-31'
+        AND product_id NOT IN (SELECT 
+            product_id
+        FROM
+            sales
+        WHERE
+            sale_date NOT BETWEEN '2019-01-01' AND '2019-03-31');
+            
+#1158. Market Analysis I
+WITH t AS
+(SELECT 
+    order_id, order_date, buyer_id
+FROM
+    orders
+WHERE
+    YEAR(order_date) = '2019')
+SELECT 
+    user_id AS buyer_id,
+    join_date,
+    SUM(status1) AS orders_in_2019
+FROM
+    (SELECT 
+        user_id, join_date, IF(order_id IS NULL, 0, 1) AS status1
+    FROM
+        users u
+    LEFT JOIN t ON u.user_id = t.buyer_id) AS d
+GROUP BY user_id;
