@@ -339,3 +339,23 @@ FROM
         users u
     LEFT JOIN t ON u.user_id = t.buyer_id) AS d
 GROUP BY user_id;
+
+
+#1083. Sales Analysis II
+SELECT 
+    s.buyer_id
+FROM
+    sales s
+        JOIN
+    product p USING (product_id)
+WHERE
+    p.product_name = 'S8'
+        AND s.buyer_id NOT IN (SELECT 
+            s1.buyer_id
+        FROM
+            sales s1
+                JOIN
+            product p1 USING (product_id)
+        WHERE
+            p1.product_name = 'iPhone');
+            
