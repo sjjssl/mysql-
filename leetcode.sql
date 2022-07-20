@@ -359,3 +359,33 @@ WHERE
         WHERE
             p1.product_name = 'iPhone');
             
+#1179. Reformat Department Table
+SELECT 
+    id,
+    SUM(IF(month = 'Jan', revenue, NULL)) AS 'Jan_Revenue',
+    SUM(IF(month = 'Feb', revenue, NULL)) AS 'Feb_Revenue',
+    SUM(IF(month = 'Mar', revenue, NULL)) AS 'Mar_Revenue',
+    SUM(IF(month = 'Apr', revenue, NULL)) AS 'Apr_Revenue',
+    SUM(IF(month = 'May', revenue, NULL)) AS 'May_Revenue',
+    SUM(IF(month = 'Jun', revenue, NULL)) AS 'Jun_Revenue',
+    SUM(IF(month = 'Jul', revenue, NULL)) AS 'Jul_Revenue',
+    SUM(IF(month = 'Aug', revenue, NULL)) AS 'Aug_Revenue',
+    SUM(IF(month = 'Sep', revenue, NULL)) AS 'Sep_Revenue',
+    SUM(IF(month = 'Oct', revenue, NULL)) AS 'Oct_Revenue',
+    SUM(IF(month = 'Nov', revenue, NULL)) AS 'Nov_Revenue',
+    SUM(IF(month = 'Dec', revenue, NULL)) AS 'Dec_Revenue'
+FROM
+    department
+GROUP BY id;
+#626. Exchange Seats
+SELECT 
+    IF(id < (SELECT 
+                MAX(id)
+            FROM
+                seat),
+        IF(id % 2 = 0, id - 1, id + 1),
+        IF(id % 2 = 1, id, id - 1)) AS id,
+    student
+FROM
+    seat
+ORDER BY id;
